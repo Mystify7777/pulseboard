@@ -322,6 +322,36 @@ describe("UpdateCard", () => {
     expect(onUpdated).not.toHaveBeenCalled();
   });
 
+  it("resets cancelled edits when entering edit mode again", () => {
+    render(
+      <UpdateCard
+        update={update}
+        auth={auth}
+        onUpdated={() => {}}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Edit" }));
+
+    const textInput = screen.getByRole("textbox", { name: /update text/i });
+
+    fireEvent.change(textInput, {
+      target: { value: "Cancelled draft" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+
+    fireEvent.click(screen.getByRole("button", { name: "Edit" }));
+
+    expect(
+      screen.getByRole("textbox", { name: /update text/i })
+    ).toHaveValue(update.text);
+
+    expect(
+      screen.getByRole("combobox", { name: /status/i })
+    ).toHaveValue(update.status);
+  });
+
   it("shows an error and keeps the edit form open when saving fails", async () => {
     editUpdate.mockRejectedValueOnce(new Error("Failed to save update"));
 

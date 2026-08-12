@@ -122,31 +122,37 @@ export default function UpdateCard({ update, auth, onUpdated, onDeleted }) {
     }
   }
 
+  function handleEditStart() {
+    setEditText(update.text);
+    setEditStatus(update.status);
+    setError(null);
+    setIsEditing(true);
+  }
 
-    async function handleEditSave() {
-      if (!auth) return;
+  async function handleEditSave() {
+    if (!auth) return;
 
-      setError(null);
-      setSaving(true);
+    setError(null);
+    setSaving(true);
 
-      try {
-        const { update: updated } = await editUpdate(
-          update._id,
-          {
-            text: editText,
-            status: editStatus,
-          },
-          auth.token
-        );
+    try {
+      const { update: updated } = await editUpdate(
+        update._id,
+        {
+          text: editText,
+          status: editStatus,
+        },
+        auth.token
+      );
 
-        onUpdated(updated);
-        setIsEditing(false);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setSaving(false);
-      }
+      onUpdated(updated);
+      setIsEditing(false);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
     }
+  }
 
   return (
     <article className="update-card">
@@ -242,7 +248,7 @@ export default function UpdateCard({ update, auth, onUpdated, onDeleted }) {
                 <button
                   type="button"
                   className="edit-btn"
-                  onClick={() => setIsEditing(true)}
+                  onClick={handleEditStart}
                 >
                   Edit
                 </button>
